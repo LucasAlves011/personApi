@@ -1,5 +1,6 @@
 package com.dio.apiperson2.controller;
 
+import com.dio.apiperson2.dto.request.PersonDTO;
 import com.dio.apiperson2.entity.Person;
 import com.dio.apiperson2.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<Person> createPerson(@RequestBody Person person){
-        personService.addPerson(person);
-        return ResponseEntity.created(URI.create("/person/"+ person.getId())).body(person);
+    public ResponseEntity<PersonDTO> createPerson(@RequestBody PersonDTO personDTO){
+        personService.addPerson(personDTO);
+        return ResponseEntity.created(URI.create("/person/"+ personDTO.getId())).body(personDTO);
     }
 
     @GetMapping

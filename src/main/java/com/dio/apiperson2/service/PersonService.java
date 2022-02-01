@@ -1,5 +1,7 @@
 package com.dio.apiperson2.service;
 
+import com.dio.apiperson2.dto.mapper.PersonMapper;
+import com.dio.apiperson2.dto.request.PersonDTO;
 import com.dio.apiperson2.entity.Address;
 import com.dio.apiperson2.entity.Person;
 import com.dio.apiperson2.repository.AddressRepository;
@@ -13,6 +15,7 @@ public class PersonService  {
     @Autowired
     ViaCepService viaCepService;
 
+    private final PersonMapper personMapper = PersonMapper.INSTANCE;
     private final PersonRepository personRepository;
     private final AddressRepository addressRepository;
 
@@ -22,19 +25,21 @@ public class PersonService  {
         this.addressRepository = addressRepository;
     }
 
-    public void addPerson(Person person){
-        saveWithCep(person);
+    public void addPerson(PersonDTO personDTO){
+        saveWithCep(personDTO);
     }
 
 
-    private void saveWithCep(Person person) {
-        String cep = person.getAddress().getCep();
+    private void saveWithCep(PersonDTO personDTO) {
+        String cep = personDTO.getAddress().getCep();
         Address address = addressRepository.findById(cep).orElseGet( () -> {
              Address newAddress = viaCepService.consultarCep(cep);
             addressRepository.save(newAddress);
             return newAddress;
         });
-        person.setAddress(address);
-        personRepository.save(person);
+        personDTO.setAddress(address);
+        Person bufferPerson = personMapper.toModel(personDTO);
+        personRepository.save(bufferPerson);
+
     }
 }
