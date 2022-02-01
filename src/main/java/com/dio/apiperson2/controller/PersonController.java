@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -38,8 +39,14 @@ public class PersonController {
         return ResponseEntity.ok(p);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonDTO> updateById(@PathVariable Long id, @RequestBody @Valid PersonDTO personDTO) throws PersonNotFoundException {
+        personService.updateById(id,personDTO);
+       return ResponseEntity.created(URI.create("/person/"+ personDTO.getId())).body(personDTO);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> findByid(@PathVariable Long id) throws PersonNotFoundException {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) throws PersonNotFoundException {
         personService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

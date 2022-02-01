@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,18 +38,6 @@ public class PersonService  {
         return peaple.stream().map(personMapper::toDTO).collect(Collectors.toList());
     }
 
-    private void saveWithCep(PersonDTO personDTO) {
-        String cep = personDTO.getAddress().getCep();
-        Address address = addressRepository.findById(cep).orElseGet( () -> {
-             Address newAddress = viaCepService.consultarCep(cep);
-            addressRepository.save(newAddress);
-            return newAddress;
-        });
-        personDTO.setAddress(address);
-        Person bufferPerson = personMapper.toModel(personDTO);
-        personRepository.save(bufferPerson);
-    }
-
     public PersonDTO findById(Long id) throws PersonNotFoundException {
         Person person = verifyIfExists(id);
         return personMapper.toDTO(person);
@@ -61,8 +48,33 @@ public class PersonService  {
         personRepository.deleteById(id);
     }
 
+    public void updateById(Long id, PersonDTO personDTO) throws PersonNotFoundException {
+        verifyIfExists(id);
+        String cep = personDTO.getAddress().getCep();
+        Address address = addressRepository.findById(cep).orElseGet( () -> {
+            Address newAddress = viaCepService.consultarCep(cep);
+            addressRepository.save(newAddress);
+            return newAddress;
+        });
+        personDTO.setAddress(address);
+        Person bufferPerson = personMapper.toModel(personDTO);
+        personRepository.save(bufferPerson);
+    }
+
     private Person verifyIfExists(Long id) throws PersonNotFoundException {
         return personRepository.findById(id)
                 .orElseThrow(() -> new PersonNotFoundException(id));
+    }
+
+    private void saveWithCep(PersonDTO personDTO) {
+        String cep = personDTO.getAddress().getCep();
+        Address address = addressRepository.findById(cep).orElseGet( () -> {
+            Address newAddress = viaCepService.consultarCep(cep);
+            addressRepository.save(newAddress);
+            return newAddress;
+        });
+        personDTO.setAddress(address);
+        Person bufferPerson = personMapper.toModel(personDTO);
+        personRepository.save(bufferPerson);
     }
 }
