@@ -13,10 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/person")
+//@AllArsgConstructor(onConstructor = @__(@AutoWired))  ----------> ***
 public class PersonController {
 
     private final PersonService personService;
 
+    //*** ----> Dá  pra tirar essa injeção somente com a anotação do lombok, mas optei deixar desse jeito
     @Autowired
     public PersonController(PersonService personService) {
         this.personService = personService;
