@@ -4,12 +4,14 @@ import com.dio.apiperson2.dto.mapper.PersonMapper;
 import com.dio.apiperson2.dto.request.PersonDTO;
 import com.dio.apiperson2.entity.Address;
 import com.dio.apiperson2.entity.Person;
+import com.dio.apiperson2.exception.PersonNotFoundException;
 import com.dio.apiperson2.repository.AddressRepository;
 import com.dio.apiperson2.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,4 +52,9 @@ public class PersonService  {
         personRepository.save(bufferPerson);
     }
 
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+        return personMapper.toDTO(person);
+    }
 }
