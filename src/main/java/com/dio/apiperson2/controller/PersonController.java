@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/person")
@@ -27,7 +28,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public String teste(){
-        return "Primeiro commmit";
+    public ResponseEntity<List<PersonDTO>> listAll() {
+        return ResponseEntity.ok(personService.listAll());
     }
 }

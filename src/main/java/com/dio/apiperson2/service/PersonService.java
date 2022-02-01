@@ -9,6 +9,9 @@ import com.dio.apiperson2.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PersonService  {
 
@@ -29,6 +32,11 @@ public class PersonService  {
         saveWithCep(personDTO);
     }
 
+    public List<PersonDTO> listAll(){
+        List<Person> peaple = personRepository.findAll();
+        return peaple.stream().map(personMapper::toDTO).collect(Collectors.toList());
+    }
+
 
     private void saveWithCep(PersonDTO personDTO) {
         String cep = personDTO.getAddress().getCep();
@@ -40,6 +48,6 @@ public class PersonService  {
         personDTO.setAddress(address);
         Person bufferPerson = personMapper.toModel(personDTO);
         personRepository.save(bufferPerson);
-
     }
+
 }
