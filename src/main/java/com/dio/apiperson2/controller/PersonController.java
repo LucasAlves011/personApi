@@ -6,17 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("api/v1/person")
 public class PersonController {
 
+    private final PersonService personService;
+
     @Autowired
-    PersonService personService;
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @PostMapping
     public ResponseEntity<Person> createPerson(@RequestBody Person person){
         personService.addPerson(person);
-        return ResponseEntity.ok(person);
+        return ResponseEntity.created(URI.create("/person/"+ person.getId())).body(person);
     }
 
     @GetMapping

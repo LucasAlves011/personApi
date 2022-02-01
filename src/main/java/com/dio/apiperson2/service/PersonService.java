@@ -11,17 +11,19 @@ import org.springframework.stereotype.Service;
 public class PersonService  {
 
     @Autowired
-    PersonRepository personRepository;
-
-    @Autowired
-    AddressRepository addressRepository;
-
-    @Autowired
     ViaCepService viaCepService;
+
+    private final PersonRepository personRepository;
+    private final AddressRepository addressRepository;
+
+    @Autowired
+    public PersonService(PersonRepository personRepository, AddressRepository addressRepository) {
+        this.personRepository = personRepository;
+        this.addressRepository = addressRepository;
+    }
 
     public void addPerson(Person person){
         saveWithCep(person);
-//        return personRepository.save(person);
     }
 
 
