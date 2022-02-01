@@ -39,7 +39,6 @@ public class PersonService  {
         return peaple.stream().map(personMapper::toDTO).collect(Collectors.toList());
     }
 
-
     private void saveWithCep(PersonDTO personDTO) {
         String cep = personDTO.getAddress().getCep();
         Address address = addressRepository.findById(cep).orElseGet( () -> {
@@ -53,8 +52,17 @@ public class PersonService  {
     }
 
     public PersonDTO findById(Long id) throws PersonNotFoundException {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new PersonNotFoundException(id));
+        Person person = verifyIfExists(id);
         return personMapper.toDTO(person);
+    }
+
+    public void deleteById(Long id) throws PersonNotFoundException {
+        verifyIfExists(id);
+        personRepository.deleteById(id);
+    }
+
+    private Person verifyIfExists(Long id) throws PersonNotFoundException {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
     }
 }
